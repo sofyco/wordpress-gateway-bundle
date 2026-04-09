@@ -3,7 +3,6 @@
 namespace Sofyco\Bundle\WordPressGatewayBundle\Tests\Repository;
 
 use PDOStatement;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sofyco\Bundle\WordPressGatewayBundle\Connection\MysqlConnection;
 use Sofyco\Bundle\WordPressGatewayBundle\Repository\SiteRepository;
@@ -14,7 +13,7 @@ final class SiteRepositoryTest extends TestCase
     {
         $connection = $this->createMock(MysqlConnection::class);
         $connection->expects($this->never())->method('exec');
-        $repository = $this->createMock(SiteRepository::class);
+        $repository = new SiteRepository($connection);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid database name');
@@ -30,7 +29,7 @@ final class SiteRepositoryTest extends TestCase
             ->method('exec')
             ->with('CREATE DATABASE `example_com` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')
             ->willReturn(1);
-        $repository = $this->createMock(SiteRepository::class);
+        $repository = new SiteRepository($connection);
 
         self::assertTrue($repository->create('https://example.com'));
     }
@@ -47,7 +46,7 @@ final class SiteRepositoryTest extends TestCase
             ->method('prepare')
             ->with('SELECT 1 FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ? LIMIT 1')
             ->willReturn($statement);
-        $repository = $this->createMock(SiteRepository::class);
+        $repository = new SiteRepository($connection);
 
         self::assertTrue($repository->isExists('https://example.com'));
     }
@@ -60,7 +59,7 @@ final class SiteRepositoryTest extends TestCase
 
         $connection = $this->createMock(MysqlConnection::class);
         $connection->expects($this->once())->method('prepare')->willReturn($statement);
-        $repository = $this->createMock(SiteRepository::class);
+        $repository = new SiteRepository($connection);
 
         self::assertFalse($repository->isExists('https://missing.schema'));
     }
@@ -69,7 +68,7 @@ final class SiteRepositoryTest extends TestCase
     {
         $connection = $this->createMock(MysqlConnection::class);
         $connection->expects($this->never())->method('prepare');
-        $repository = $this->createMock(SiteRepository::class);
+        $repository = new SiteRepository($connection);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid domain');
