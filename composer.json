@@ -1,7 +1,7 @@
 {
     "name": "sofyco/wordpress-gateway-bundle",
     "type": "symfony-bundle",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Symfony WordPress Gateway Bundle",
     "keywords": ["php", "symfony", "wordpress", "gateway", "bundle"],
     "homepage": "https://github.com/sofyco/wordpress-gateway-bundle",
