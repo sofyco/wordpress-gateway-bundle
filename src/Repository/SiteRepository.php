@@ -2,18 +2,12 @@
 
 namespace Sofyco\Bundle\WordPressGatewayBundle\Repository;
 
-use Pdo\Mysql;
+use Sofyco\Bundle\WordPressGatewayBundle\Connection\MysqlConnection;
 
 final readonly class SiteRepository implements SiteRepositoryInterface
 {
-    private Mysql $connection;
-
-    public function __construct(string $dsn)
+    public function __construct(private MysqlConnection $connection)
     {
-        $this->connection = new Mysql(dsn: $dsn, options: [
-            Mysql::ATTR_ERRMODE => Mysql::ERRMODE_EXCEPTION,
-            Mysql::ATTR_DEFAULT_FETCH_MODE => Mysql::FETCH_ASSOC,
-        ]);
     }
 
     public function create(string $url): bool
