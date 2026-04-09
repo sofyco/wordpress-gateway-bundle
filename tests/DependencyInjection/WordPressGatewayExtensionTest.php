@@ -3,6 +3,7 @@
 namespace Sofyco\Bundle\WordPressGatewayBundle\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
+use Sofyco\Bundle\WordPressGatewayBundle\Connection\MysqlConnection;
 use Sofyco\Bundle\WordPressGatewayBundle\DependencyInjection\WordPressGatewayExtension;
 use Sofyco\Bundle\WordPressGatewayBundle\Gateway\WordPressGateway;
 use Sofyco\Bundle\WordPressGatewayBundle\Repository\SiteRepository;
@@ -20,6 +21,7 @@ final class WordPressGatewayExtensionTest extends TestCase
         $extension->load(configs: [], container: $container);
 
         self::assertTrue($container->hasDefinition(UniqueDomainValidator::class));
+        self::assertTrue($container->hasDefinition(MysqlConnection::class));
         self::assertTrue($container->hasDefinition(SiteRepositoryInterface::class));
         self::assertTrue($container->hasDefinition(WordPressGateway::class));
 
@@ -28,6 +30,10 @@ final class WordPressGatewayExtensionTest extends TestCase
         self::assertTrue($validatorDefinition->isAutowired());
         self::assertTrue($validatorDefinition->isAutoconfigured());
         self::assertTrue($validatorDefinition->hasTag('validator.constraint_validator'));
+
+        $mysqlConnectionDefinition = $container->getDefinition(MysqlConnection::class);
+        self::assertSame(MysqlConnection::class, $mysqlConnectionDefinition->getClass());
+        self::assertTrue($mysqlConnectionDefinition->isAutowired());
 
         $siteRepositoryDefinition = $container->getDefinition(SiteRepositoryInterface::class);
         self::assertSame(SiteRepository::class, $siteRepositoryDefinition->getClass());

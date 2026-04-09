@@ -4,7 +4,7 @@ namespace Sofyco\Bundle\WordPressGatewayBundle\Connection;
 
 use Pdo\Mysql;
 
-final class MysqlConnection extends Mysql
+class MysqlConnection extends Mysql
 {
     public function __construct(string $dsn)
     {

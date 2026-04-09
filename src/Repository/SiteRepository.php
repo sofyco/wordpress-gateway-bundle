@@ -4,7 +4,7 @@ namespace Sofyco\Bundle\WordPressGatewayBundle\Repository;
 
 use Sofyco\Bundle\WordPressGatewayBundle\Connection\MysqlConnection;
 
-final readonly class SiteRepository implements SiteRepositoryInterface
+readonly class SiteRepository implements SiteRepositoryInterface
 {
     public function __construct(private MysqlConnection $connection)
     {
