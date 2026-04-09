@@ -4,29 +4,25 @@ namespace Sofyco\Bundle\WordPressGatewayBundle\Gateway;
 
 use Sofyco\Bundle\WordPressGatewayBundle\Entity\Content;
 use Sofyco\Bundle\WordPressGatewayBundle\Entity\Site;
-use Sofyco\Bundle\WordPressGatewayBundle\Repository\DatabaseRepositoryInterface;
+use Sofyco\Bundle\WordPressGatewayBundle\Repository\SiteRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class WordPressGateway
 {
-    public function __construct(private HttpClientInterface $httpClient, private DatabaseRepositoryInterface $databaseRepository)
+    public function __construct(private HttpClientInterface $httpClient, private SiteRepositoryInterface $siteRepository)
     {
     }
 
     public function isSiteExists(string $baseUrl): bool
     {
-        return $this->databaseRepository->isExists(
-            database: $this->getDatabaseByUrl(url: $baseUrl),
-        );
+        return $this->siteRepository->isExists(url: $baseUrl);
     }
 
     public function createSite(Site $site): bool
     {
-        $this->databaseRepository->create(
-            database: $this->getDatabaseByUrl(url: $site->baseUrl),
-        );
+        $this->siteRepository->create(url: $site->baseUrl);
 
         $response = $this->httpClient->request(
             method: Request::METHOD_POST,
@@ -59,16 +55,5 @@ final readonly class WordPressGateway
                 'verify_peer' => false,
             ],
         )->toArray();
-    }
-
-    private function getDatabaseByUrl(string $url): string
-    {
-        $domain = parse_url($url, PHP_URL_HOST);
-
-        if (false === is_string($domain)) {
-            throw new \InvalidArgumentException('Invalid domain');
-        }
-
-        return str_replace('.', '_', $domain);
     }
 }

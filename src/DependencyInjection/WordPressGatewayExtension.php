@@ -3,8 +3,8 @@
 namespace Sofyco\Bundle\WordPressGatewayBundle\DependencyInjection;
 
 use Sofyco\Bundle\WordPressGatewayBundle\Gateway\WordPressGateway;
-use Sofyco\Bundle\WordPressGatewayBundle\Repository\DatabaseRepository;
-use Sofyco\Bundle\WordPressGatewayBundle\Repository\DatabaseRepositoryInterface;
+use Sofyco\Bundle\WordPressGatewayBundle\Repository\SiteRepository;
+use Sofyco\Bundle\WordPressGatewayBundle\Repository\SiteRepositoryInterface;
 use Sofyco\Bundle\WordPressGatewayBundle\Validator\UniqueDomainValidator;
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Definition, Extension\Extension};
 
@@ -18,9 +18,9 @@ final class WordPressGatewayExtension extends Extension
         $uniqueDomainValidator->addTag(name: 'validator.constraint_validator');
         $container->setDefinition(id: UniqueDomainValidator::class, definition: $uniqueDomainValidator);
 
-        $databaseRepository = new Definition(class: DatabaseRepository::class);
-        $databaseRepository->setAutowired(autowired: true);
-        $container->setDefinition(id: DatabaseRepositoryInterface::class, definition: $databaseRepository);
+        $siteRepository = new Definition(class: SiteRepository::class);
+        $siteRepository->setAutowired(autowired: true);
+        $container->setDefinition(id: SiteRepositoryInterface::class, definition: $siteRepository);
 
         $wordPressGateway = new Definition(class: WordPressGateway::class);
         $wordPressGateway->setAutowired(autowired: true);

@@ -2,14 +2,14 @@
 
 namespace Sofyco\Bundle\WordPressGatewayBundle\Validator;
 
-use Sofyco\Bundle\WordPressGatewayBundle\Gateway\WordPressGateway;
+use Sofyco\Bundle\WordPressGatewayBundle\Repository\SiteRepositoryInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 final class UniqueDomainValidator extends ConstraintValidator
 {
-    public function __construct(private readonly WordPressGateway $wordPressGateway)
+    public function __construct(private readonly SiteRepositoryInterface $siteRepository)
     {
     }
 
@@ -23,7 +23,7 @@ final class UniqueDomainValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, 'string');
         }
 
-        if ($this->wordPressGateway->isSiteExists(baseUrl: $value)) {
+        if ($this->siteRepository->isExists(url: $value)) {
             $this->context->buildViolation($constraint->message)->addViolation();
         }
     }
