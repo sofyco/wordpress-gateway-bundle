@@ -4,8 +4,8 @@ namespace Sofyco\Bundle\WordPressGatewayBundle\Tests\Gateway;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Sofyco\Bundle\WordPressGatewayBundle\Entity\Content;
-use Sofyco\Bundle\WordPressGatewayBundle\Entity\Site;
+use Sofyco\Bundle\WordPressGatewayBundle\Entity\PublishPostContent;
+use Sofyco\Bundle\WordPressGatewayBundle\Entity\SiteInstallation;
 use Sofyco\Bundle\WordPressGatewayBundle\Gateway\WordPressGateway;
 use Sofyco\Bundle\WordPressGatewayBundle\Repository\SiteRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,7 +54,7 @@ final class WordPressGatewayTest extends TestCase
 
     public function testCreateSiteReturnsTrueOnOkStatus(): void
     {
-        $site = new Site('https://example.com', ['admin_user' => 'admin']);
+        $siteInstallation = new SiteInstallation('https://example.com', ['admin_user' => 'admin']);
         $response = $this->createMock(ResponseInterface::class);
 
         $this->siteRepository
@@ -79,26 +79,26 @@ final class WordPressGatewayTest extends TestCase
             )
             ->willReturn($response);
 
-        self::assertTrue($this->gateway->createSite($site));
+        self::assertTrue($this->gateway->createSite($siteInstallation));
     }
 
     public function testCreateSiteReturnsFalseOnNonOkStatus(): void
     {
-        $site = new Site('https://example.com', ['admin_user' => 'admin']);
+        $siteInstallation = new SiteInstallation('https://example.com', ['admin_user' => 'admin']);
         $response = $this->createMock(ResponseInterface::class);
 
         $this->siteRepository->expects($this->once())->method('create')->with('https://example.com')->willReturn(true);
         $response->expects($this->once())->method('getStatusCode')->willReturn(Response::HTTP_CREATED);
         $this->httpClient->expects($this->once())->method('request')->willReturn($response);
 
-        self::assertFalse($this->gateway->createSite($site));
+        self::assertFalse($this->gateway->createSite($siteInstallation));
     }
 
     public function testPublishPostSendsPayloadAndReturnsArray(): void
     {
         $this->siteRepository->expects($this->never())->method('create');
         $this->siteRepository->expects($this->never())->method('isExists');
-        $content = new Content(
+        $publishPostContent = new PublishPostContent(
             id: '42',
             image: 'https://example.com/image.jpg',
             title: 'Title',
@@ -134,7 +134,7 @@ final class WordPressGatewayTest extends TestCase
 
         self::assertSame(
             ['id' => 42, 'status' => 'published'],
-            $this->gateway->publishPost('token', 'https://example.com', $content),
+            $this->gateway->publishPost('token', 'https://example.com', $publishPostContent),
         );
     }
 }

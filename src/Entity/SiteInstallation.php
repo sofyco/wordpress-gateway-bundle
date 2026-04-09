@@ -2,7 +2,7 @@
 
 namespace Sofyco\Bundle\WordPressGatewayBundle\Entity;
 
-final readonly class Site
+final readonly class SiteInstallation
 {
     public function __construct(public string $baseUrl, public array $configuration)
     {

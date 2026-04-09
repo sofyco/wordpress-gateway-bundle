@@ -3,13 +3,13 @@
 namespace Sofyco\Bundle\WordPressGatewayBundle\Tests\Entity;
 
 use PHPUnit\Framework\TestCase;
-use Sofyco\Bundle\WordPressGatewayBundle\Entity\Content;
+use Sofyco\Bundle\WordPressGatewayBundle\Entity\PublishPostContent;
 
-final class ContentTest extends TestCase
+final class PublishPostContentTest extends TestCase
 {
     public function testItStoresConstructorValues(): void
     {
-        $content = new Content(
+        $content = new PublishPostContent(
             id: 'id-1',
             image: 'https://example.com/image.jpg',
             title: 'Title',

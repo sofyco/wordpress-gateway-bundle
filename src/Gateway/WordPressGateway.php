@@ -2,8 +2,8 @@
 
 namespace Sofyco\Bundle\WordPressGatewayBundle\Gateway;
 
-use Sofyco\Bundle\WordPressGatewayBundle\Entity\Content;
-use Sofyco\Bundle\WordPressGatewayBundle\Entity\Site;
+use Sofyco\Bundle\WordPressGatewayBundle\Entity\PublishPostContent;
+use Sofyco\Bundle\WordPressGatewayBundle\Entity\SiteInstallation;
 use Sofyco\Bundle\WordPressGatewayBundle\Repository\SiteRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,15 +20,15 @@ final readonly class WordPressGateway
         return $this->siteRepository->isExists(url: $baseUrl);
     }
 
-    public function createSite(Site $site): bool
+    public function createSite(SiteInstallation $siteInstallation): bool
     {
-        $this->siteRepository->create(url: $site->baseUrl);
+        $this->siteRepository->create(url: $siteInstallation->baseUrl);
 
         $response = $this->httpClient->request(
             method: Request::METHOD_POST,
-            url: $site->baseUrl . '/wp-admin/install.php',
+            url: $siteInstallation->baseUrl . '/wp-admin/install.php',
             options: [
-                'json' => $site->configuration,
+                'json' => $siteInstallation->configuration,
                 'verify_peer' => false,
             ],
         );
@@ -36,20 +36,20 @@ final readonly class WordPressGateway
         return Response::HTTP_OK === $response->getStatusCode();
     }
 
-    public function publishPost(string $accessToken, string $baseUrl, Content $content): array
+    public function publishPost(string $accessToken, string $baseUrl, PublishPostContent $publishPostContent): array
     {
         return $this->httpClient->request(
             method: Request::METHOD_POST,
             url: $baseUrl . '/wp-json/evdim/posts',
             options: [
                 'json' => [
-                    'id' => $content->id,
-                    'image' => $content->image,
-                    'title' => $content->title,
-                    'description' => $content->description,
-                    'content' => $content->content,
-                    'tags' => $content->tags,
-                    'categories' => $content->categories,
+                    'id' => $publishPostContent->id,
+                    'image' => $publishPostContent->image,
+                    'title' => $publishPostContent->title,
+                    'description' => $publishPostContent->description,
+                    'content' => $publishPostContent->content,
+                    'tags' => $publishPostContent->tags,
+                    'categories' => $publishPostContent->categories,
                     'accessToken' => $accessToken,
                 ],
                 'verify_peer' => false,

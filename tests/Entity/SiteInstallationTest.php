@@ -3,13 +3,13 @@
 namespace Sofyco\Bundle\WordPressGatewayBundle\Tests\Entity;
 
 use PHPUnit\Framework\TestCase;
-use Sofyco\Bundle\WordPressGatewayBundle\Entity\Site;
+use Sofyco\Bundle\WordPressGatewayBundle\Entity\SiteInstallation;
 
-final class SiteTest extends TestCase
+final class SiteInstallationTest extends TestCase
 {
     public function testItStoresConstructorValues(): void
     {
-        $site = new Site(
+        $site = new SiteInstallation(
             baseUrl: 'https://example.com',
             configuration: ['admin_user' => 'admin'],
         );
