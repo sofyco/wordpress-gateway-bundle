@@ -2,7 +2,8 @@
 
 namespace Sofyco\Bundle\WordPressGatewayBundle\Gateway;
 
-use Sofyco\Bundle\WordPressGatewayBundle\Entity\ContentInterface;
+use Sofyco\Bundle\WordPressGatewayBundle\Entity\Content;
+use Sofyco\Bundle\WordPressGatewayBundle\Entity\Site;
 use Sofyco\Bundle\WordPressGatewayBundle\Repository\DatabaseRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,17 +22,17 @@ final readonly class WordPressGateway
         );
     }
 
-    public function createSite(string $baseUrl, mixed $configuration): bool
+    public function createSite(Site $site): bool
     {
         $this->databaseRepository->create(
-            database: $this->getDatabaseByUrl(url: $baseUrl),
+            database: $this->getDatabaseByUrl(url: $site->baseUrl),
         );
 
         $response = $this->httpClient->request(
             method: Request::METHOD_POST,
-            url: $baseUrl . '/wp-admin/install.php',
+            url: $site->baseUrl . '/wp-admin/install.php',
             options: [
-                'json' => $configuration,
+                'json' => $site->configuration,
                 'verify_peer' => false,
             ],
         );
@@ -39,7 +40,7 @@ final readonly class WordPressGateway
         return Response::HTTP_OK === $response->getStatusCode();
     }
 
-    public function publishPost(string $accessToken, string $baseUrl, ContentInterface $content): array
+    public function publishPost(string $accessToken, string $baseUrl, Content $content): array
     {
         return $this->httpClient->request(
             method: Request::METHOD_POST,
